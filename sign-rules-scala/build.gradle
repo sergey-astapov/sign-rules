@@ -1,0 +1,60 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    apply plugin: 'scala'
+    apply plugin: 'idea'
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+//    mainClassName = ""
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    def scalaMajor = '2.12'
+    def scalaMinor = '4'
+    def logbackVersion = '1.1.7'
+    def slf4jVersion = '1.7.22'
+
+    dependencies {
+        compile(
+                "org.scala-lang:scala-library:$scalaMajor.$scalaMinor",
+                "ch.qos.logback:logback-core:$logbackVersion",
+                "ch.qos.logback:logback-classic:$logbackVersion",
+                "org.slf4j:slf4j-api:$slf4jVersion",
+//                "org.slf4j:slf4j-simple:$slf4jVersion",
+                "com.softwaremill.macwire:proxy_$scalaMajor:2.3.0",
+                "ru.yandex.qatools:yatomata:1.7"
+        )
+
+        testCompile(
+                "junit:junit:4.12",
+                "org.scalatest:scalatest_$scalaMajor:3.0.1"
+        )
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '3.5'
+    }
+
+    shadowJar {
+        baseName = 'sign-rules'
+        classifier = null
+        version = null
+    }
+}
