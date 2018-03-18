@@ -1,6 +1,6 @@
 package io.signrools.api
 
-class DocId(val value: Long) extends AnyVal
+import io.signrools.model.DocId
 
 sealed abstract class Event extends Serializable {
   val id: DocId

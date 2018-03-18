@@ -1,6 +1,7 @@
 package io.signrools.fsm
 
 import io.signrools.api._
+import io.signrools.model.DocId
 import org.scalatest.{FunSpec, FunSuite}
 import ru.yandex.qatools.fsm.impl.YatomataImpl
 

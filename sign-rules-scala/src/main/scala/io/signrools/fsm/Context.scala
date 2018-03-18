@@ -1,6 +1,7 @@
 package io.signrools.fsm
 
-import io.signrools.api.{DocId, Empty, SignRule}
+import io.signrools.api.{Empty, SignRule}
+import io.signrools.model.DocId
 
 import scala.util.{Success, Try}
 
