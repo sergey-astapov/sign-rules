@@ -32,32 +32,27 @@ public class ContextFsm implements StopConditionAware<ContextState, Event> {
 
     @OnTransit
     public void onDocUploaded(Idle from, Uploaded to, DocUploaded event) {
-        context.state().validate(event);
-        updateContext(context.update(Uploaded.apply()));
+        transform(event, Uploaded.apply());
     }
 
     @OnTransit
     public void onSignRuleProvided(Uploaded from, Signing to, SignRuleProvided event) {
-        context.state().validate(event);
-        updateContext(context.update(Signing.apply()));
+        transform(event, Signing.apply());
     }
 
     @OnTransit
     public void onSignRuleUpdated(Signing from, Signing to, SignRuleUpdated event) {
-        context.state().validate(event);
-        updateContext(context.update(Signing.apply()));
+        transform(event, Signing.apply());
     }
 
     @OnTransit
     public void onSignRuleCompleted(Signing from, Signing to, SignRuleCompleted event) {
-        context.state().validate(event);
-        updateContext(context.update(Signing.apply()));
+        transform(event, Signing.apply());
     }
 
     @OnTransit
     public void onSignRuleCompleted(Signing from, Signed to, DocSigned event) {
-        context.state().validate(event);
-        updateContext(context.update(Signed.apply()));
+        transform(event, Signed.apply());
     }
 
     @Override
@@ -65,12 +60,16 @@ public class ContextFsm implements StopConditionAware<ContextState, Event> {
         return false;//this.context.isAllProcessed();
     }
 
-    private void updateContext(Context newContext) {
-        log.info("updateContext, oldContext: {}, newContext: {}", context, newContext);
-        context = newContext;
+    private void transform(Event event, ContextState newState) {
+        context.state()
+                .validate(event)
+                .flatMap(e -> context.update(newState))
+                .map(this::updateContext);
     }
 
-    private void validate(Event event) {
-        //TODO
+    private Context updateContext(Context newContext) {
+        log.info("updateContext, oldContext: {}, newContext: {}", context, newContext);
+        context = newContext;
+        return context;
     }
 }
