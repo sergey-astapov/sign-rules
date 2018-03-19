@@ -1,11 +1,10 @@
 package io.signrools.ops
 
-import io.signrools.api.Signer
+import io.signrools.api._
 import io.signrools.model.{Document, Signature}
 import com.roundeights.hasher.Implicits._
 
 object DocumentExt {
-
   private def hashFunc: Array[Byte] => Array[Byte] = a => a.sha512.hash.bytes
 
   implicit class DocumentOps(doc: Document) {
@@ -26,4 +25,11 @@ object DocumentExt {
       doc.copy(signatures = doc.signatures ++ List(Signature(signer, doc.hash)))
   }
 
+  def traverse(doc: Document, root: SignRule): Document = root match {
+    case Empty => doc
+    case s @ Signer(_, _, _, _) => doc.sign(s)
+    case SignList(h :: tail) => traverse(traverse(doc, h), SignList(tail))
+    case SignList(Nil) => doc
+    case SignBranch(l, r) => traverse(traverse(doc, l), r)
+  }
 }
